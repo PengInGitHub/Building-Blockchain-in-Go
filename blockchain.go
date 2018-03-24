@@ -1,10 +1,5 @@
 package main 
 
-import (
-"fmt"
-
-)
-
 type Blockchain struct{
     blocks []*Block
 }
