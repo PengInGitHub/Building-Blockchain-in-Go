@@ -1,8 +1,20 @@
 package main 
 
+import (
+	"bytes"
+	"crypto/sha256"
+	"fmt"
+	"math"
+	"math/big"
+)
 //targetBits defines how difficult mining is
 //it is the value differs from 256, ensure this value is significant enough but not too big
 //because the bigger the value the more difficult to find a proper hash
+
+var (
+    maxNonce = math.MaxInt64
+)
+
 const targetBits = 24
 
 type ProofOfWork struct {
@@ -33,7 +45,7 @@ func NewProofOfWork(b *Block) *ProofOfWork{
 func(pow *ProofOfWork) prepareData(nonce int) []byte{
 
     //merge block fields with target and nonce
-    data := bytes.join(
+    data := bytes.Join(
                       [][]byte{ 
                                pow.block.PrevBlockHash,
                                pow.block.Data,
@@ -54,7 +66,7 @@ func(pow *ProofOfWork) Run() (int, []byte){
     nonce := 0
     fmt.Printf("mining the block containing \"%s\"\n", pow.block.Data)
 
-    for nonce < MaxNonce {
+    for nonce < maxNonce {
         //prepare data
         data := pow.prepareData(nonce)
 
@@ -66,7 +78,7 @@ func(pow *ProofOfWork) Run() (int, []byte){
         hashInt.SetBytes(hash[:])
 
         //compare the integer with the target
-        if hashInt.Com(pow.target) == -1{
+        if hashInt.Cmp(pow.target) == -1{
                 break
             }else{
                 nonce ++
