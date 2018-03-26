@@ -1,8 +1,11 @@
 package main 
 
 import (
+    "flag"
+    "fmt"
     "log"
-
+    "os"
+    "strconv"
 )
 
 //CLI is responsible for processing command line arguments
@@ -17,7 +20,7 @@ func(cli *CLI) printUsage(){
 }
 
 func(cli *CLI) validateArgs(){
-    if len(os.Args)<2{
+    if len(os.Args)<2 {
         cli.printUsage()
         os.Exit(1)
     }
@@ -50,11 +53,13 @@ func(cli *CLI) printChain(){
 func(cli *CLI) Run(){
     cli.validateArgs()
 
+    //use flag package to parse command line arguments
     addBlockCmd := flag.NewFlagSet("addblock", flag.ExitOnError)
     printChainCmd := flag.NewFlagSet("printchain", flag.ExitOnError)
 
     addBlockData := addBlockCmd.String("data", "", "Block data")
 
+    //check command provided by user, parse related flag subcommand
     switch os.Args[1] {
     case "addblock":
         err := addBlockCmd.Parse(os.Args[2:])
@@ -71,6 +76,7 @@ func(cli *CLI) Run(){
         os.Exit(1)  
     }
 
+    //check which of the subcommands were and run related functions
     if addBlockCmd.Parsed(){
         if *addBlockData == ""{
             addBlockUsage()
