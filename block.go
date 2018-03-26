@@ -2,6 +2,8 @@ package main
 
 import (
     "time"
+    "encoding/gob"
+    "log"
 )
 
 type Block struct{
@@ -10,6 +12,22 @@ type Block struct{
     PrevBlockHash []byte
     Hash []byte
     Nonce int
+}
+
+//Serizalize() serizalizes the block
+func(b *Block) Serizalize() []byte{
+
+    //declare a Buffer that will store the serizalized data
+    var result bytes.Buffer
+
+    //init an encoder that encodes the block
+    encoder := gob.NewEncoder(&result)
+    err := encoder.Encode(&b)
+    if err != nil {
+        log.Panic(err)
+    }
+
+    return result.Bytes()
 }
 
 func NewBlock(data string, prevBlockHash []byte) *Block{
@@ -26,4 +44,50 @@ func NewBlock(data string, prevBlockHash []byte) *Block{
 func NewGenesisBlock() *Block{
     return NewBlock("Genesis Block",[]byte{})
 }
+
+//DeserializeBlock() deserializes the block, receive a byte array as input and returns a Block
+func DeserializeBlock(d []byte) *Block{
+    var block Block
+
+    decoder := gob.NewDecoder((bytes.NewReader(d))
+    err := decoder.Decode(block)
+    if err != nil {
+        log.Panic(err)
+    }
+   
+    return &block
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
